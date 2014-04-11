@@ -10,3 +10,4 @@ HasPerl: The marriage of Haskell and Perl - An easy way to real world Haskell
 + 注意: demo.hspl 裡面
   - 和 Inline Python 相關的部分需要安裝 cpan 的 Inline::Python 才能用
   - 用到 JSON::XS 的部分, 需要安裝 cpan 的 JSON::XS 才能用
+  - Mod.hspm 裡面有用到 hackage cabal 的 aeson
