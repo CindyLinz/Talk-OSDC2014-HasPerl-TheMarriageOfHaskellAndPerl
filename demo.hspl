@@ -102,7 +102,7 @@ EOT
 py_start( sub { ##{ do
   (a, b) <- readArray =<< cap "@_"
   return (a + b :: Double)
-} })
+} });
 
 # HasPerl 的 mod require
 HasPerl::require('Mod');
