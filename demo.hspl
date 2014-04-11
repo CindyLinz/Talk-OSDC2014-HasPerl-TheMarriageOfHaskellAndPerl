@@ -1,0 +1,111 @@
+use strict;
+use warnings;
+
+# print "hello
+print "自己的國家自己救\n";
+
+##{ liftIO $ putStrLn "腐女的妄想沒得救" };
+
+# 費式數列 perl 實作
+# 1 1 2 3 5 8 ...,
+for(0..5){
+  my $n = $_;
+  my($a, $b) = (1, 1);
+  while ( $n -- ) {
+    ($a, $b) = ($b, $a+$b); 
+  }
+  print $a,$/;
+}
+
+# 費式數列 haskell 實作 (擬迴圈法)
+for(1..5) {
+  ##{ do
+    n <- cap "$_" >>= readInt
+    let
+      fib a b 0 = a
+      fib a b n = fib b (a+b) (n-1)
+    liftIO $ putStrLn $ show $ fib 1 1 n
+  }
+}
+
+# 費式數列 haskell 實作 (無窮數列法)
+for(0..5) {
+  ##{ do
+    n <- cap "$_" >>= readInt
+    --         fib = 1 1 2 3 5 8 ...
+    -- +) tail fib = 1 2 3 5 8 13 ...
+    --               2 3 5 8 13 ...
+    let fib = 1 : 1 : zipWith (+)  fib (tail fib)
+    liftIO $ putStrLn $ show (fib !! n)
+  };
+}
+
+# gcd (perl - haskell 混合遞迴, 正常 return)
+sub gcd { ##{ do
+  (a, b) <- cap "@_" >>= readArray
+  if b /= 0
+    then callArgs "gcd" (b, a `mod` b) >>= readInt
+    else return (a :: Int)
+} }
+
+print "gcd(15, 20) = ", gcd(15, 20);
+
+# gcd2 (perl - haskell 混合遞迴, haskell die 結果給 perl 收)
+sub gcd2 { ##{ do
+  (a, b) <- cap "@_" >>= readArray
+  if b /= 0
+    then callArgs "gcd2" (b, a `mod` b) >>= readInt
+    else die $ show (a :: Int)
+} }
+
+eval { gcd2(15, 20) };
+print "gcd2(15, 20) = $@";
+
+# perl die 給 haskell 收
+##{ do
+  catch
+    ( eval "die '馬金江'" >> return ())
+    (\(PerlException msg _) -> liftIO $ putStrLn $ "exception: " ++ msg)
+};
+
+# 各種 access 的方式
+my $data = [1, 2, { a => sub { return "a $_[0] $_[1]" } } ];
+##{ do
+  str <- cap "$data" @- 2 %- "a" &- ("X", "D") >>= readStr
+  cap "$data" @- 2 %- "b" $= str
+  str2 <- eval "$data->[2]{a}('o','x')" >>= readStr
+  eval $ "$data->[3] = '" ++ str2 ++ "'"
+  cap "$data" @- 3 %= [("A", "a"), ("B", "b")]
+  return ()
+};
+
+use Data::Dumper;
+$Data::Dumper::Indent = 0;
+print Dumper($data),$/;
+
+# 藉由「路過 perl」, 介接 python 與 haskell
+use Inline Python => << 'EOT';
+def py_add(a, b):
+  return a + b
+
+def py_start(hs_add):
+  print hs_add(2, 8)
+EOT
+
+# haskell 呼叫 python
+##{ do
+  sum <- callArgs "py_add" (3.5 :: Double, 4.7 :: Double) >>= readDouble
+  liftIO $ putStrLn $ "py_add = " ++ show sum
+};
+
+# python 呼叫 haskell
+py_start( sub { ##{ do
+  (a, b) <- readArray =<< cap "@_"
+  return (a + b :: Double)
+} })
+
+# HasPerl 的 mod require
+HasPerl::require('Mod');
+use JSON::XS;
+
+print Mod::incHead(encode_json([1,2,3,4])), $/;

@@ -1,0 +1,19 @@
+package Mod;
+
+use strict;
+use warnings;
+
+###{
+import Data.Aeson
+import Data.Char
+import qualified Data.ByteString.Lazy as B
+import Perl
+}
+
+sub incHead { ##{ do
+  json <- cap "$_[0]" >>= readStr
+  let Just (a:as) = decode (B.pack $ map (fromIntegral . ord) json) :: Maybe [Int]
+  return $ map (chr . fromIntegral) $ B.unpack $ encode $ a+1 : as
+} }
+
+1;

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <!--
+    vim: filetype=markdown
+  -->
+  <head>
+    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- powered by Remark https://github.com/gnab/remark -->
+    <link rel="stylesheet" href="highlight.js/styles/tomorrow.css"/>
+    <script src="highlight.js/highlight.pack.js"></script>
+    <style type="text/css">
+      /* Slideshow styles */
+      .small {
+        font-size: smaller
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# HasPerl: The marriage of Haskell and Perl
+# 一條低門檻實用 Haskell 的路
+
+### 2014.4.11
+## CindyLinz @ Gamesofa 神來也
+
+---
+
+# 安裝方式
+
++ 安裝 ghc, cabal, libperl
+
++ 從 github https://github.com/CindyLinz/Haskell-Perl 下載 Haskell-Perl
+
+  ```
+$ cd Haskell-Perl; cabal configure; cabal install; cd ..
+  ```
+
++ 從 github https://github.com/CindyLinz/Haskell-HasPerl 下載 Haskell-HasPerl
+
+  ```
+$ cd Haskell-HasPerl; cabal configure; cabal install; cd ..
+  ```
+
++ hasperl 執行檔應該會出現在 $HOME/.cabal/bin/hasperl
+
+---
+
+# 沒有黑箱的 perl (Perl interpreter)
+
+--
+
++ perl (小寫) 是一個實作透明公開的 interpreter
+
+  實作的細節都寫在公開文件裡面
+
+--
+
++ 所以 perl 必須非常穩定
+
+  Perl 原則: 當 perl 改版升級時, 用 Perl 寫的程式 __不__ 需要 coverage test
+
+--
+
++ 透明公開沒有黑箱, 所以我們彼此信任, 就可以整合得很深 (遠目)
+
+---
+
+# 小政府主義的 GHC (The Glasgow Haskell Compiler)
+
+--
+
++ GHC (主流 Haskell compiler) 是 Haskell 寫的
+
+--
+
++ 拆解程度很高
+
+--
+
++ 我們可以自由拆卸她的部件, 嵌在自己的程式裡面
+
+--
+
++ 我們可以自由頂替她的組件, 讓她為我們做她自己沒想過的事..
+
+--
+
++ 直譯編譯兩相宜
+
+---
+
+# 為什麼要揉合 Haskell 和已經 functional 的 Perl?
+
+--
+
++ Perl 才不 functional 呢!
+
+--
+
++ 不是看一個語言擁有越多 functional feature,
+
+  是看一個語言剩下越少 non-functional feature.
+
+--
+
++ 真．函數語言 - 窮到只剩函數..
+
+--
+
++ non-functional feature 會讓 functional 的高階連續技失效.
+
+  就像有審查制度的開放出版一樣...
+
+--
+
++ 威力大的語言, 其內建的基礎 feature 是很少的, 花樣都在組合連續技裡面
+
+  (類比: svn vs. git)
+
+---
+
+# 為什麼要揉合 Haskell 和已經 functional 的 Perl?
+
++ 很多新興語言喜歡宣稱自己 "is also functional"
+
+  有的語言說自己像 Haskell
+
+--
+
++ __不要臉的髒東西！__
+
+--
+
++ Using __PURE__ functional language is the only way to taste it
+
+--
+
+  ```
+To iterate is human, to recursive, divine!
+(遞迴只應天上有．凡人應當用迴圈)
+  ```
+
+--
+
++ 用沒有迴圈只有遞迴的 Haskell
+
+  一下子就升天了... (各種意味)
+
+--
+
++ 當覺得一切都是遞迴的時候
+
+  離得道就不遠了...
+
+---
+
+# Haskell 泛型 type/class 的不同意義
+
+--
+
++ Haskell type 的表達能力比較強 (與 Java 相比)
+
+  可以描述函數有沒有 side-effect, 對哪一部分有 side-effect
+
+  可以描述 generic type 之間的關聯性
+
+--
+
++ 學習 Haskell class 的不同境界: (在 irc freenode #haskell channel 看到的)
+
+  1. Use type classes like you would use object-oriented classes. -- _jmcarthur_
+  2. Use type classes like you would use Java interfaces. -- _jmcarthur_
+  3. Use type classes like they were intended. -- _jmcarthur_
+  4. Use type classes in ways the designers did not foresee. -- _jmcarthur_
+  5. You are now Oleg. -- _carter_
+  6. Prove turing completeness in typeclasses. -- _bristlesquirrel_
+
+--
+
++ Java 的 generic type 讓你少打一些字;
+
+  Haskell 的 generic type 讓你 focus 問題.
+
+---
+
+# Haskell 泛型 type/class 的不同意義
+
++ Haskell 的 type/class 可以拿來作邏輯推論法則
+
+--
+
++ 有人拿 Haskell type/class 建立 Peano 公設一階算數系統
+
+  (危險動作請物模仿)
+
+---
+
+# Haskell 泛型 type/class 的不同意義
+
++ 有時寫程式拖久了, 腦子糊了, 還遇到染血太陽花...
+
+  都忘記自己在寫什麼了...
+
+--
+
+  但是, Haskell 記得......
+
+---
+
+# Haskell 特有的開發經驗(1)
+
++ 使用一個沒用過的 Haskell framework 的時候
+
+--
+
++ 未看先猜我要用的功能的 type 會長什麼樣
+
+--
+
++ 找找看這個 type 出現在哪些 public 函數
+
+--
+
++ 找一條路徑, 讓我從現在在寫的地方, 怎樣可以湊出滿足那個函數所需要的所有 type
+
+--
+
++ 接起來就會動了, 而且效果就是我要的, 結果是正確的..
+
+--
+
++ (除非有興趣) 不需要了解這個 framework 運作的流程
+
+---
+
+# Haskell 特有的開發經驗(2)
+
++ 程式 refactor 的方式
+
+--
+
++ 把原有的 type 改成 refactor 完以後希望的樣子
+
+--
+
++ 丟給 GHC 產生 compile error
+
+--
+
++ 把 compile error 修正
+
+--
+
++ 收工 (不用測試)
+
+---
+
+class: center, middle
+
+# ~ 謝 謝 ~
+# ( ^\_^ )
+
+我初學程式, 那可意氣風發了,
+
+說什麼 Object Oriented, Design Patterns, Agile programming,
+
+當真是不要臉的胡吹法螺.
+
+直到後來修習 Haskell, 才慢慢悟到了人生妙諦.
+
+其後勤修 Type Theory, 數年之後, 終於明白了天人化生, 萬物滋長的要道.
+
+
+    </textarea>
+    <script src="remark-0.5.6.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
